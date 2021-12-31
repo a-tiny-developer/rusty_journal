@@ -94,7 +94,7 @@ pub fn list_tasks(journal_path: PathBuf) -> Result<()> {
         tasks
             .iter()
             .enumerate()
-            .for_each(|(order, task)| println!("{} : {}", order + 1, task));
+            .for_each(|(order, task)| println!("{}: {}", order + 1, task));
     }
 
     Ok(())
