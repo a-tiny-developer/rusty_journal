@@ -1,12 +1,12 @@
-use std::path::PathBuf;
-
+use anyhow::anyhow;
 use rusty_journal::{
     cli::{Action::*, CommandLineArgs},
     tasks::{self, Task},
 };
+use std::path::PathBuf;
 use structopt::StructOpt;
 
-fn main() {
+fn main() -> anyhow::Result<()> {
     // Get the command-line arguments.
     let CommandLineArgs {
         action,
@@ -16,15 +16,15 @@ fn main() {
     // Unpack the journal file.
     let journal_file = journal_file
         .or_else(find_default_journal_file)
-        .expect("Failed to find journal file");
+        .ok_or(anyhow!("Failed to find journal file."))?;
 
     // Perform the action.
     match action {
         Add { text } => tasks::add_task(journal_file, Task::new(text)),
         List => tasks::list_tasks(journal_file),
         Done { position } => tasks::complete_task(journal_file, position),
-    }
-    .expect("Failed to perform action")
+    }?;
+    Ok(())
 }
 
 fn find_default_journal_file() -> Option<PathBuf> {
